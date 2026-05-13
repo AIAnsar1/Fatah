@@ -1,0 +1,27 @@
+[package]
+name = "fatah-proto"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["ftp", "http-basic", "ssh"]
+ftp = []
+ssh = ["dep:async-ssh2-tokio"]
+http-basic = ["dep:reqwest"]
+
+[dependencies]
+fatah-core = { workspace = true }
+fatah-net = { workspace = true }
+async-ssh2-tokio = { workspace = true, optional = true }
+async-trait = { workspace = true }
+inventory = { workspace = true }
+reqwest = { workspace = true, optional = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

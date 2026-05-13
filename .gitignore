@@ -1,0 +1,76 @@
+# --- Rust / Cargo ----------------------------------------------------------
+/target
+**/target
+Cargo.lock.bak
+*.rs.bk
+*.pdb
+
+# Per-crate target dirs (when crates are built standalone)
+**/*.rmeta
+**/*.rlib
+
+# --- Editors / IDE ---------------------------------------------------------
+/.idea
+/.vscode
+*.iml
+*.swp
+*.swo
+
+# --- OS / FS ---------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Claude Code -----------------------------------------------------------
+.claude/
+.claude.json
+CLAUDE.md.bak
+
+# --- Project local --------------------------------------------------------
+# Legacy C / Python sources we're rewriting from — kept locally as reference.
+/oldproj/
+/oldProj/
+
+# Local sled databases produced by `fatah run`
+*.db/
+fatah.db/
+/data/
+
+# Logs and event streams
+*.log
+*.jsonl
+/logs/
+
+# Coverage / profiling
+/coverage/
+*.profraw
+*.profdata
+/flamegraph.svg
+/perf.data
+/perf.data.old
+
+# Criterion benchmark output
+/target/criterion/
+
+# Dotenvs and secret material — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# Wordlists are usually pulled from upstream sources and large
+/wordlists/*
+!/wordlists/.gitkeep
+!/wordlists/README*
+
+# Build artifacts produced by ./scripts/build-release.sh
+/dist/
+/release/
+
+# Temporary files
+*.tmp
+*.bak
+*~

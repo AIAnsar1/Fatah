@@ -1,0 +1,28 @@
+[package]
+name = "fatah-attack"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fatah-core = { workspace = true }
+fatah-database = { workspace = true }
+fatah-proto = { workspace = true }
+fatah-report = { workspace = true }
+fatah-session = { workspace = true }
+fatah-wordlist = { workspace = true }
+async-trait = { workspace = true }
+chrono = { workspace = true }
+futures = { workspace = true }
+governor = { workspace = true }
+parking_lot = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[lints]
+workspace = true

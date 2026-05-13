@@ -1,0 +1,23 @@
+[package]
+name = "fatah-wordlist"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fatah-core = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+pin-project-lite = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+
+[lints]
+workspace = true

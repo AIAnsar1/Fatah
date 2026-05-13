@@ -1,0 +1,35 @@
+[package]
+name = "fatah-benchmarks"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+fatah-attack = { workspace = true }
+fatah-core = { workspace = true }
+fatah-database = { workspace = true }
+fatah-report = { workspace = true }
+fatah-testing = { workspace = true }
+fatah-wordlist = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true, features = ["async_tokio"] }
+
+[[bench]]
+name = "credential_stream"
+harness = false
+
+[[bench]]
+name = "engine_throughput"
+harness = false
+
+[lints]
+workspace = true

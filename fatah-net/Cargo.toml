@@ -1,0 +1,26 @@
+[package]
+name = "fatah-net"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["tls"]
+# rustls + webpki-roots — pulled in for HTTPS/FTPS/IMAPS modules.
+tls = ["dep:rustls", "dep:tokio-rustls", "dep:webpki-roots"]
+
+[dependencies]
+fatah-core = { workspace = true }
+async-trait = { workspace = true }
+bytes = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+rustls = { workspace = true, optional = true }
+tokio-rustls = { workspace = true, optional = true }
+webpki-roots = { workspace = true, optional = true }
+
+[lints]
+workspace = true

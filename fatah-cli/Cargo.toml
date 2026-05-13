@@ -1,0 +1,36 @@
+[package]
+name = "fatah-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "fatah"
+path = "src/main.rs"
+
+[dependencies]
+fatah-attack = { workspace = true }
+fatah-core = { workspace = true }
+fatah-database = { workspace = true }
+fatah-proto = { workspace = true }
+fatah-report = { workspace = true }
+fatah-session = { workspace = true }
+fatah-spray = { workspace = true }
+fatah-telemetry = { workspace = true }
+fatah-wordlist = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+figment = { workspace = true }
+futures = { workspace = true }
+humantime = { workspace = true }
+humantime-serde = { workspace = true }
+serde = { workspace = true }
+uuid = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

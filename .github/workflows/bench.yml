@@ -1,0 +1,30 @@
+name: bench
+
+# Manual / nightly only — Criterion runs are too slow for every PR but
+# we still want a one-click way to spot regressions.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1"  # Monday 03:00 UTC
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  criterion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.94"
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo bench -p fatah-benchmarks -- --output-format bencher | tee bench.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: criterion-report
+          path: |
+            target/criterion
+            bench.txt
+          retention-days: 30
