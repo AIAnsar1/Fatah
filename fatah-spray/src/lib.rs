@@ -16,8 +16,8 @@ use std::time::Duration;
 
 use fatah_core::{Credential, CredentialPair, Secret};
 use fatah_wordlist::{CredentialSource, CredentialStream};
-use futures::stream::{self, StreamExt};
 use futures::FutureExt;
+use futures::stream::{self, StreamExt};
 use tokio::fs;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::time::sleep;

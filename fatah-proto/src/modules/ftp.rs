@@ -17,7 +17,7 @@ use fatah_core::{
     AttemptContext, AttemptOutcome, CredentialPair, FatahError, Protocol, ProtocolDescriptor,
     Result, Target,
 };
-use fatah_net::{connect, LineStream};
+use fatah_net::{LineStream, connect};
 
 use crate::registry::ProtoEntry;
 
@@ -49,13 +49,13 @@ impl Protocol for FtpProtocol {
         let banner = conn.read_line(ctx.timeout).await?;
         if !banner.starts_with("220") {
             return Ok(AttemptOutcome::Error(format!(
-                "unexpected banner: {}",
-                banner
+                "unexpected banner: {banner}"
             )));
         }
 
         let login = credential.login_str().unwrap_or("anonymous");
-        conn.write_line(&format!("USER {login}"), ctx.timeout).await?;
+        conn.write_line(&format!("USER {login}"), ctx.timeout)
+            .await?;
         let user_resp = conn.read_line(ctx.timeout).await?;
         match classify_code(&user_resp) {
             Some(230) => {

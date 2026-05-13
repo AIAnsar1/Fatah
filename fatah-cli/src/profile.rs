@@ -6,14 +6,14 @@
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use fatah_core::{
     AttackPlan, Credential, CredentialPair, Endpoint, RateLimit, Secret, StrategyKind, Target,
 };
 use fatah_spray::SpraySource;
 use fatah_wordlist::{ComboSource, CredentialSource, FileWordlist, StaticSource};
-use figment::providers::{Format as _, Json, Toml, Yaml};
 use figment::Figment;
+use figment::providers::{Format as _, Json, Toml, Yaml};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -62,9 +62,17 @@ fn default_stop_on_first() -> bool {
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub enum SourceCfg {
-    Static { pairs: Vec<PairCfg> },
-    File { path: PathBuf, login: String },
-    Combo { logins: PathBuf, passwords: PathBuf },
+    Static {
+        pairs: Vec<PairCfg>,
+    },
+    File {
+        path: PathBuf,
+        login: String,
+    },
+    Combo {
+        logins: PathBuf,
+        passwords: PathBuf,
+    },
     Spray {
         logins: PathBuf,
         passwords: PathBuf,
@@ -97,7 +105,8 @@ impl Profile {
             "json" => Figment::new().merge(Json::file(path)),
             _ => Figment::new().merge(Toml::file(path)),
         };
-        fig.extract::<Profile>().with_context(|| format!("parsing {}", path.display()))
+        fig.extract::<Profile>()
+            .with_context(|| format!("parsing {}", path.display()))
     }
 
     pub fn target(&self) -> Target {
@@ -145,7 +154,11 @@ impl Profile {
             SourceCfg::Combo { logins, passwords } => {
                 Box::new(ComboSource::new(logins.clone(), passwords.clone()))
             }
-            SourceCfg::Spray { logins, passwords, per_password_window } => Box::new(SpraySource::new(
+            SourceCfg::Spray {
+                logins,
+                passwords,
+                per_password_window,
+            } => Box::new(SpraySource::new(
                 logins.clone(),
                 passwords.clone(),
                 *per_password_window,

@@ -20,14 +20,14 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{Context, Result, anyhow, bail};
 use clap::{Parser, Subcommand};
 use fatah_attack::Engine;
 use fatah_core::{AttackPlan, Endpoint, RateLimit, StrategyKind, Target};
 use fatah_database::{Repository, SledRepository, StoredFinding};
 use fatah_proto::Registry;
 use fatah_report::{ConsoleReporter, JsonlReporter, Reporter};
-use fatah_telemetry::{init as init_telemetry, Format as TelemetryFormat, TelemetryConfig};
+use fatah_telemetry::{Format as TelemetryFormat, TelemetryConfig, init as init_telemetry};
 use fatah_wordlist::{ComboSource, CredentialSource, FileWordlist, StaticSource};
 use futures::StreamExt;
 use uuid::Uuid;
@@ -50,6 +50,7 @@ struct Cli {
 }
 
 #[derive(Subcommand, Debug)]
+#[allow(clippy::large_enum_variant)] // CLI parse is one-shot; the size hit is irrelevant
 enum Command {
     /// List every protocol compiled into this binary.
     ListProtocols,
@@ -131,7 +132,11 @@ async fn main() -> Result<()> {
 
     init_telemetry(TelemetryConfig {
         filter: cli.log.clone(),
-        format: if cli.log_json { TelemetryFormat::Json } else { TelemetryFormat::Pretty },
+        format: if cli.log_json {
+            TelemetryFormat::Json
+        } else {
+            TelemetryFormat::Pretty
+        },
         log_file: None,
         with_ansi: !cli.log_json,
     })
@@ -160,7 +165,8 @@ fn list_protocols() -> Result<()> {
 async fn run(args: RunArgs) -> Result<()> {
     let (target, plan, source): (Target, AttackPlan, Box<dyn CredentialSource>) =
         if let Some(path) = &args.profile {
-            let profile = Profile::load(path).with_context(|| format!("load {}", path.display()))?;
+            let profile =
+                Profile::load(path).with_context(|| format!("load {}", path.display()))?;
             let target = profile.target();
             let plan = profile.build_plan();
             let source = profile.build_source()?;
@@ -211,7 +217,11 @@ async fn run(args: RunArgs) -> Result<()> {
     if summary.findings.is_empty() {
         println!("no credentials recovered after {} attempts", summary.tried);
     } else {
-        println!("recovered {} credential(s) against {}:", summary.findings.len(), target.endpoint);
+        println!(
+            "recovered {} credential(s) against {}:",
+            summary.findings.len(),
+            target.endpoint
+        );
         for a in &summary.findings {
             println!(
                 "  {}  {}:{}",
@@ -247,10 +257,11 @@ async fn list_findings(args: FindingsArgs) -> Result<()> {
     Ok(())
 }
 
-fn build_from_flags(
-    args: &RunArgs,
-) -> Result<(Target, AttackPlan, Box<dyn CredentialSource>)> {
-    let raw = args.target.as_deref().ok_or_else(|| anyhow!("--target is required"))?;
+fn build_from_flags(args: &RunArgs) -> Result<(Target, AttackPlan, Box<dyn CredentialSource>)> {
+    let raw = args
+        .target
+        .as_deref()
+        .ok_or_else(|| anyhow!("--target is required"))?;
     let mut target = parse_target(raw)?;
     target.tls = args.tls;
 
@@ -291,15 +302,18 @@ fn build_source_from_flags(args: &RunArgs) -> Result<Box<dyn CredentialSource>> 
         (Some(login), None, None, Some(p)) => {
             Ok(Box::new(FileWordlist::passwords_for(p, login.clone())))
         }
-        (None, Some(logins), None, Some(passwords)) => {
-            Ok(Box::new(ComboSource::new(logins.clone(), passwords.clone())))
-        }
+        (None, Some(logins), None, Some(passwords)) => Ok(Box::new(ComboSource::new(
+            logins.clone(),
+            passwords.clone(),
+        ))),
         (Some(login), None, Some(pass), None) => {
             use fatah_core::{Credential, CredentialPair, Secret};
-            Ok(Box::new(StaticSource::new(vec![CredentialPair::with_login(
-                Credential::from(login.clone()),
-                Secret::new(pass.clone()),
-            )])))
+            Ok(Box::new(StaticSource::new(vec![
+                CredentialPair::with_login(
+                    Credential::from(login.clone()),
+                    Secret::new(pass.clone()),
+                ),
+            ])))
         }
         _ => bail!("provide either `-l + -P`, or `-L + -P`, or `-l + -p`"),
     }

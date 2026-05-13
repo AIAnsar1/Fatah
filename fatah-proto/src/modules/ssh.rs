@@ -60,8 +60,7 @@ impl Protocol for SshProtocol {
 /// but keeps us decoupled from the underlying `russh` version.
 fn classify(message: &str) -> AttemptOutcome {
     let lower = message.to_ascii_lowercase();
-    if lower.contains("authentication") || lower.contains("denied") || lower.contains("no auth")
-    {
+    if lower.contains("authentication") || lower.contains("denied") || lower.contains("no auth") {
         AttemptOutcome::Failure
     } else if lower.contains("timed out") || lower.contains("timeout") {
         AttemptOutcome::Error("timeout".into())

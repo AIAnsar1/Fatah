@@ -14,7 +14,10 @@ pub struct LineStream<S> {
 
 impl<S: AsyncRead + AsyncWrite + Unpin> LineStream<S> {
     pub fn new(stream: S) -> Self {
-        Self { reader: BufReader::new(stream), buf: String::with_capacity(256) }
+        Self {
+            reader: BufReader::new(stream),
+            buf: String::with_capacity(256),
+        }
     }
 
     /// Read one line (terminated by `\n`, with the trailing CR/LF

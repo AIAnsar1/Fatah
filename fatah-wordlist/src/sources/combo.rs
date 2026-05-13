@@ -18,7 +18,10 @@ pub struct ComboSource {
 
 impl ComboSource {
     pub fn new(logins: impl Into<PathBuf>, passwords: impl Into<PathBuf>) -> Self {
-        Self { logins: logins.into(), passwords: passwords.into() }
+        Self {
+            logins: logins.into(),
+            passwords: passwords.into(),
+        }
     }
 }
 

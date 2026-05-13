@@ -1,0 +1,29 @@
+# cargo-audit configuration.
+#
+# Each ignored advisory MUST be revisited when its upstream crate
+# publishes a fix. Drop the entry as soon as `cargo update -p <crate>`
+# pulls in the patched version.
+
+[advisories]
+ignore = [
+    # libcrux-sha3 0.0.4 — Incorrect Output of Incremental Portable SHAKE API.
+    # Pulled transitively via: async-ssh2-tokio → russh → libcrux-ml-kem.
+    # Cannot bump without russh upstream releasing against libcrux-sha3 >= 0.0.8.
+    "RUSTSEC-2026-0074",
+
+    # rsa 0.9.x — Marvin Attack (timing sidechannel on RSA decryption).
+    # No fixed version available upstream. We do not perform RSA
+    # decryption in production code paths; the dep lives behind russh
+    # for SSH host-key verification (where the timing channel is far
+    # less interesting). Re-evaluate when `rsa` ships a fix.
+    "RUSTSEC-2023-0071",
+
+    # fxhash — unmaintained. Pulled transitively by sled 0.34. We plan
+    # to evaluate `redb` as a sled replacement; until then the warning
+    # stays muted.
+    "RUSTSEC-2025-0057",
+
+    # instant — unmaintained. Pulled by parking_lot 0.11 → sled.
+    # Same plan as above: remove together with the sled migration.
+    "RUSTSEC-2024-0384",
+]

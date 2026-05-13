@@ -5,18 +5,15 @@ use fatah_core::{Endpoint, FatahError, Result};
 use rustls::pki_types::ServerName;
 use rustls::{ClientConfig, RootCertStore};
 use tokio::net::TcpStream;
-use tokio_rustls::client::TlsStream;
 use tokio_rustls::TlsConnector;
+use tokio_rustls::client::TlsStream;
 
 use crate::tcp::connect;
 
 /// Connect TCP and wrap with a rustls client session using webpki-roots
 /// as the trust anchor set. `endpoint.host` is used both for SNI and
 /// for certificate name validation.
-pub async fn connect_tls(
-    endpoint: &Endpoint,
-    timeout: Duration,
-) -> Result<TlsStream<TcpStream>> {
+pub async fn connect_tls(endpoint: &Endpoint, timeout: Duration) -> Result<TlsStream<TcpStream>> {
     let tcp = connect(endpoint, timeout).await?;
     let connector = connector();
     let server_name = ServerName::try_from(endpoint.host.clone())

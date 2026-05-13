@@ -13,7 +13,10 @@ pub struct ConsoleReporter {
 
 impl Default for ConsoleReporter {
     fn default() -> Self {
-        Self { color: true, verbose: false }
+        Self {
+            color: true,
+            verbose: false,
+        }
     }
 }
 
@@ -64,8 +67,7 @@ impl Reporter for ConsoleReporter {
             EngineEvent::Started { plan_id } => {
                 println!("[*] fatah engine starting (plan {plan_id})");
             }
-            EngineEvent::AttemptCompleted(a) => self.print_attempt(a),
-            EngineEvent::Found(a) => self.print_attempt(a),
+            EngineEvent::AttemptCompleted(a) | EngineEvent::Found(a) => self.print_attempt(a),
             EngineEvent::Progress { tried, total } => {
                 if self.verbose {
                     match total {

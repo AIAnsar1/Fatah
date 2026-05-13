@@ -13,7 +13,10 @@ pub struct Endpoint {
 
 impl Endpoint {
     pub fn new(host: impl Into<String>, port: u16) -> Self {
-        Self { host: host.into(), port }
+        Self {
+            host: host.into(),
+            port,
+        }
     }
 }
 

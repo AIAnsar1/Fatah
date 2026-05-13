@@ -2,9 +2,13 @@
 //! built-in source kind. We're profiling the source itself, not any
 //! network or protocol work.
 
+// Benches are panic-on-setup-failure by design; this is just bench
+// scaffolding, not production code.
+#![allow(clippy::expect_used)]
+
 use std::io::Write;
 
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
 use fatah_benchmarks::{drain, static_pairs};
 use fatah_wordlist::{ComboSource, FileWordlist};
 use tempfile::NamedTempFile;

@@ -63,7 +63,11 @@ impl Protocol for HttpBasicProtocol {
             "{scheme}://{host}:{port}{path}",
             host = target.endpoint.host,
             port = target.endpoint.port,
-            path = if path.starts_with('/') { path.to_owned() } else { format!("/{path}") },
+            path = if path.starts_with('/') {
+                path.to_owned()
+            } else {
+                format!("/{path}")
+            },
         );
 
         let client = reqwest::Client::builder()
@@ -76,9 +80,10 @@ impl Protocol for HttpBasicProtocol {
         let method = Method::from_bytes(method.as_bytes())
             .map_err(|e| fatah_core::FatahError::Protocol(format!("method: {e}")))?;
 
-        let req = client
-            .request(method, &url)
-            .basic_auth(credential.login_str().unwrap_or(""), Some(credential.secret.expose()));
+        let req = client.request(method, &url).basic_auth(
+            credential.login_str().unwrap_or(""),
+            Some(credential.secret.expose()),
+        );
 
         let resp = match req.send().await {
             Ok(r) => r,

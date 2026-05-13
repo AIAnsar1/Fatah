@@ -1,6 +1,6 @@
 use std::num::NonZeroU32;
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use chrono::Utc;
 use fatah_core::{
@@ -101,9 +101,8 @@ impl Engine {
         let stop = Arc::new(AtomicBool::new(false));
         let tried = Arc::new(AtomicU64::new(0));
         let findings: Arc<Mutex<Vec<Attempt>>> = Arc::new(Mutex::new(Vec::new()));
-        let ctx = Arc::new(
-            AttemptContext::new(plan.timeout).with_options(plan.target.options.clone()),
-        );
+        let ctx =
+            Arc::new(AttemptContext::new(plan.timeout).with_options(plan.target.options.clone()));
 
         let mut state = session.unwrap_or_else(|| SessionState::new(plan.target.clone()));
         let baseline_tried = state.tried;
@@ -140,7 +139,13 @@ impl Engine {
                     Ok(o) => o,
                     Err(e) => AttemptOutcome::Error(e.to_string()),
                 };
-                let attempt = Attempt::new(target, cred, outcome.clone(), started, started_instant.elapsed());
+                let attempt = Attempt::new(
+                    target,
+                    cred,
+                    outcome.clone(),
+                    started,
+                    started_instant.elapsed(),
+                );
                 tried_c.fetch_add(1, Ordering::Relaxed);
 
                 for r in &reporters {
@@ -159,8 +164,9 @@ impl Engine {
             });
 
             consumed = consumed.saturating_add(1);
-            if consumed % self.checkpoint_every == 0 {
-                self.checkpoint(&mut state, consumed, findings.lock().len()).await;
+            if consumed.is_multiple_of(self.checkpoint_every) {
+                let found_now = findings.lock().len();
+                self.checkpoint(&mut state, consumed, found_now).await;
             }
         }
 
@@ -171,10 +177,10 @@ impl Engine {
         state.tried = total_tried;
         state.found = findings.lock().len();
         state.touch();
-        if let Some(repo) = &self.repository {
-            if let Err(e) = fatah_session::save(repo.as_ref(), &state).await {
-                tracing::warn!(error=%e, "final session save");
-            }
+        if let Some(repo) = &self.repository
+            && let Err(e) = fatah_session::save(repo.as_ref(), &state).await
+        {
+            tracing::warn!(error=%e, "final session save");
         }
 
         let summary = RunSummary {

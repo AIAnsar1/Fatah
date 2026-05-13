@@ -8,11 +8,12 @@ use crate::target::Target;
 
 /// High-level attack strategy. Concrete implementations live in
 /// `fatah-attack` / `fatah-spray` and are selected by this discriminator.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case")]
 pub enum StrategyKind {
     /// Classic brute-force: iterate every (login, password) the source
     /// emits, in order.
+    #[default]
     BruteForce,
     /// Password spraying: outer loop is passwords, inner loop is logins,
     /// with a sleep between successive passwords to avoid lockouts.
@@ -24,12 +25,6 @@ pub enum StrategyKind {
 
 fn default_spray_window() -> Duration {
     Duration::from_secs(300)
-}
-
-impl Default for StrategyKind {
-    fn default() -> Self {
-        Self::BruteForce
-    }
 }
 
 /// Declarative description of an attack. Built with [`bon`] for ergonomic

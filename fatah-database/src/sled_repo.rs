@@ -12,6 +12,9 @@ use crate::repository::Repository;
 const FINDINGS_TREE: &str = "findings";
 const SESSIONS_TREE: &str = "sessions";
 
+// Pass-by-value is required: this is used as `Fn(E) -> _` in `.map_err`,
+// which moves the error into the closure.
+#[allow(clippy::needless_pass_by_value)]
 fn storage_err(e: impl ToString) -> FatahError {
     FatahError::Storage(e.to_string())
 }
@@ -50,7 +53,7 @@ impl Repository for SledRepository {
         tokio::task::spawn_blocking(move || {
             let tree = db.open_tree(FINDINGS_TREE).map_err(storage_err)?;
             let mut out = Vec::new();
-            for kv in tree.iter() {
+            for kv in &tree {
                 let (_k, v) = kv.map_err(storage_err)?;
                 let f: StoredFinding = serde_json::from_slice(&v).map_err(storage_err)?;
                 out.push(f);

@@ -6,8 +6,8 @@
 
 #![allow(clippy::missing_errors_doc, clippy::module_name_repetitions)]
 
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use async_trait::async_trait;
 use fatah_core::{

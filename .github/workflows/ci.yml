@@ -78,7 +78,6 @@ jobs:
   audit:
     name: cargo-audit
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -86,4 +85,13 @@ jobs:
           toolchain: "1.94"
       - uses: Swatinem/rust-cache@v2
       - run: cargo install --locked cargo-audit
-      - run: cargo audit
+      # Ignored advisories — all transitive from upstream crates with no
+      # fixed version yet. Re-check periodically and remove `--ignore`
+      # lines as upstream releases land. See .cargo/audit.toml for the
+      # documented rationale.
+      - run: |
+          cargo audit \
+            --ignore RUSTSEC-2026-0074 \
+            --ignore RUSTSEC-2023-0071 \
+            --ignore RUSTSEC-2025-0057 \
+            --ignore RUSTSEC-2024-0384

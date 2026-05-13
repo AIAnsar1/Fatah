@@ -44,7 +44,9 @@ pub fn init(config: TelemetryConfig) -> Result<()> {
         .map(EnvFilter::try_new)
         .transpose()
         .context("invalid log filter")?
-        .unwrap_or_else(|| EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")));
+        .unwrap_or_else(|| {
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"))
+        });
 
     let registry = tracing_subscriber::registry().with(filter);
 

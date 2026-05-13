@@ -1,3 +1,6 @@
+// Benches are panic-on-setup-failure by design.
+#![allow(clippy::expect_used)]
+
 //! End-to-end engine throughput against an in-process no-op protocol.
 //! Isolates orchestration overhead: semaphore, JoinSet, task spawn,
 //! event broadcast — everything except real network/protocol cost.
@@ -11,7 +14,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
 use fatah_benchmarks::{bench_target, static_pairs};
 use fatah_core::{AttackPlan, StrategyKind};
 use fatah_wordlist::CredentialSource;

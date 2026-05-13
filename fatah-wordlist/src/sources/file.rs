@@ -54,11 +54,10 @@ impl CredentialSource for FileWordlist {
         let fixed_login = self.fixed_login.clone();
         Box::pin(
             stream::once(async move {
-                let file = File::open(&path).await.map_err(|e| {
+                File::open(&path).await.map_err(|e| {
                     tracing::error!(?path, error=%e, "open wordlist");
                     e
-                });
-                file
+                })
             })
             .filter_map(|res| async move { res.ok() })
             .flat_map(move |file| {

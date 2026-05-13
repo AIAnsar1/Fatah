@@ -15,10 +15,12 @@ use fatah_wordlist::{CredentialSource, StaticSource};
 pub fn static_pairs(n: usize) -> StaticSource {
     StaticSource::new(
         (0..n)
-            .map(|i| CredentialPair::with_login(
-                Credential::from(format!("user{i}")),
-                Secret::new(format!("pw{i}")),
-            ))
+            .map(|i| {
+                CredentialPair::with_login(
+                    Credential::from(format!("user{i}")),
+                    Secret::new(format!("pw{i}")),
+                )
+            })
             .collect(),
     )
 }
